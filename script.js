@@ -6,7 +6,7 @@ function processVideo() {
 }
 
 function analyzeSentiment(url) {
-    fetch('http://127.0.0.1:5000/analyze', {  // Replace with your actual server URL if not running locally
+    fetch('http://127.0.0.1:5000/analyze', {  
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
