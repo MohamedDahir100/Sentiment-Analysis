@@ -1,10 +1,10 @@
 from flask import Flask, request, jsonify
 from flask_cors import CORS
-from model_util import SentimentModel, getComments, calculate_video_sentiment  # Import from your sentiment analysis script
+from model_util import SentimentModel, getComments, calculate_video_sentiment
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
-model = SentimentModel()  # Instantiate the sentiment model
+CORS(app)
+model = SentimentModel()
 
 def summarize_sentiment(score):
     if score > 60:
@@ -14,21 +14,18 @@ def summarize_sentiment(score):
     else:
         return "negative"
 
-@app.route('/analyze', methods=['POST'])
+@app.route('/analyze', methods=['GET'])
 def analyze_video():
-    data = request.json
-    youtube_url = data['url']
-    print("Received URL:", youtube_url)  # Log the received URL to console
+    youtube_url = request.args.get('url')
+    print("Received URL:", youtube_url)
 
-    # Extract video ID from the YouTube URL
-    video_id = youtube_url.split('watch?v=')[-1]  # Basic parsing, consider more robust methods for different URL formats
-
-    # Fetch comments and analyze sentiment
+    video_id = youtube_url.split('watch?v=')[-1]
     comments = getComments(video_id)
     sentiment_score = calculate_video_sentiment(comments, model)
     overall_sentiment = summarize_sentiment(sentiment_score)
+    print(sentiment_score)
+    print(overall_sentiment)
 
-    # Return the summarized sentiment
     return jsonify({"sentiment": overall_sentiment, "average_score": sentiment_score})
 
 if __name__ == '__main__':
